@@ -1,0 +1,27 @@
+name: 'PR version comment'
+description: 'A Github action that adds a comments to a closed PR with a version number derived from the git commit that merged the PR'
+branding:
+  icon: git-pull-request
+  color: orange
+inputs:
+  owner:
+    description: 'The owner of the repo. Assign from github.repository_owner. Example, "dotnet".'
+    required: true
+  name:
+    description: 'The repository name. Example, "samples".'
+    required: true
+  token:
+    description: 'Github token used to access the github API. Assign from '
+    required: true
+
+outputs:
+  version:
+    description: 'The version number derived from the current git commit.'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+  - ${{ inputs.owner }}
+  - ${{ inputs.name }}
+  - ${{ inputs.token }}
