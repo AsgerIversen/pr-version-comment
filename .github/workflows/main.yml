@@ -13,8 +13,6 @@ jobs:
         uses: ./ # Uses an action in the root directory
         id: hello
         with:
-          owner: AsgerIversen
-          nams: pr-version-comment
           token: ${{ secrets.GITHUB_TOKEN }}
       # Use the output from the `hello` step
       - name: Get the output time
