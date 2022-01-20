@@ -4,6 +4,8 @@ using System.Diagnostics;
 
 string owner = "AsgerIversen";
 string reponame = "pr-version-comment";
+string token = "";
+
 
 if (args.Length > 0)
 {
