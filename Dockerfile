@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 as build-env
 
 # Copy everything and publish the release (publish implicitly restores and builds)
 COPY . ./src
-RUN dotnet publish ./src/pr-version-comment.csproj -c Release -o ./out --no-self-contained
+RUN dotnet build ./src/pr-version-comment.csproj -c Release -o ./out --no-self-contained
 
 # Label the container
 LABEL maintainer="Asger Iversen <asger.iversen@gmail.com>"
