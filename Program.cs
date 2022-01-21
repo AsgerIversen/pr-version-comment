@@ -1,4 +1,5 @@
 using Octokit;
+using OpenTap.Diagnostic;
 using System.Collections;
 using System.Diagnostics;
 
@@ -28,9 +29,44 @@ foreach (var pr in prs)
     Console.WriteLine($"  {pr.Id}:{pr.Title}");
     if(pr.Merged)
     {
-        var p = Process.Start("tap", $"sdk gitversion {pr.MergeCommitSha}");
-        p.WaitForExit ();
-        string ver = p.StandardOutput.ReadToEnd().Trim();
+        string ver = GetVersion(pr.MergeCommitSha);
         Console.WriteLine($"::set-output name=version::{ver}");
+    }
+}
+
+
+string GetVersion(string sha)
+{
+    var l = new VersionLogListener();
+    OpenTap.Log.AddListener(l);
+    var test = OpenTap.PluginManager.DirectoriesToSearch;
+    if (test.Count > 0)
+    {
+        var action = new OpenTap.Package.GitVersionAction();
+        action.Sha = sha;
+        action.Execute(CancellationToken.None);
+        OpenTap.Log.RemoveListener(l);
+        return l.Version?.ToString();
+    }
+    return null;
+}
+
+
+class VersionLogListener : OpenTap.Diagnostic.ILogListener
+{
+    public OpenTap.SemanticVersion Version { get; set; }
+    public void EventsLogged(IEnumerable<Event> Events)
+    {
+        foreach (Event e in Events)
+        {
+            if(e.Source == "GitVersion" && OpenTap.SemanticVersion.TryParse(e.Message, out var ver))
+            {
+                Version = ver;
+            }
+        }
+    }
+
+    public void Flush()
+    {
     }
 }
