@@ -1,14 +1,16 @@
 using Octokit;
 using System.Collections;
+using System.Diagnostics;
 
 string owner = "AsgerIversen";
 string reponame = "pr-version-comment";
+string token = "";
 
 
 if (args.Length > 0)
 {
     owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
-    reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY");
+    reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
     token = args[0];
 }
 Console.WriteLine("Variables:");
@@ -22,4 +24,12 @@ var repoid = repo.Id;
 var prs = await github.PullRequest.GetAllForRepository(repoid, new PullRequestRequest { State = ItemStateFilter.Closed });
 Console.WriteLine("Closed Pull Requests:");
 foreach (var pr in prs)
+{
     Console.WriteLine($"  {pr.Id}:{pr.Title}");
+    if(pr.Merged)
+    {
+        Process.Start("tap", $"sdk gitversion {pr.MergeCommitSha}");
+    }
+}
+
+

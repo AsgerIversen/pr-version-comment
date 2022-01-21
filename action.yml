@@ -4,12 +4,6 @@ branding:
   icon: git-pull-request
   color: orange
 inputs:
-  owner:
-    description: 'The owner of the repo. Assign from github.repository_owner. Example, "dotnet".'
-    required: true
-  name:
-    description: 'The repository name. Example, "samples".'
-    required: true
   token:
     description: 'Github token used to access the github API. Assign from '
     required: true
@@ -22,6 +16,4 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-  - ${{ inputs.owner }}
-  - ${{ inputs.name }}
   - ${{ inputs.token }}
