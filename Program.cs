@@ -14,7 +14,7 @@ if (args.Length > 0)
     reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
     token = args[0];
 }
-if (args.Length > 1)
+if (args.Length > 1 && !String.IsNullOrWhiteSpace(args[1]))
 {
     body = args[1];
 }
