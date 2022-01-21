@@ -1,5 +1,9 @@
 on: [push]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
