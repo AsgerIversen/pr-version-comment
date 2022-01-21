@@ -37,14 +37,18 @@ foreach (var pr in prs)
 
 string GetVersion(string sha)
 {
-    var l = new VersionLogListener();
-    OpenTap.Log.AddListener(l);
     var test = OpenTap.PluginManager.DirectoriesToSearch;
     if (test.Count > 0)
     {
+        var l = new VersionLogListener();
+        OpenTap.Log.AddListener(l);
+
         var action = new OpenTap.Package.GitVersionAction();
         action.Sha = sha;
+        Console.WriteLine($"    running tap sdk gitversion {sha}");
         action.Execute(CancellationToken.None);
+
+        OpenTap.Log.Flush();
         OpenTap.Log.RemoveListener(l);
         return l.Version?.ToString();
     }
@@ -54,12 +58,13 @@ string GetVersion(string sha)
 
 class VersionLogListener : OpenTap.Diagnostic.ILogListener
 {
-    public OpenTap.SemanticVersion Version { get; set; }
+    public OpenTap.SemanticVersion Version { get; private set; }
     public void EventsLogged(IEnumerable<Event> Events)
     {
         foreach (Event e in Events)
         {
-            if(e.Source == "GitVersion" && OpenTap.SemanticVersion.TryParse(e.Message, out var ver))
+            Console.WriteLine($"      {e.Message}");
+            if (e.Source == "GitVersion" && OpenTap.SemanticVersion.TryParse(e.Message, out var ver))
             {
                 Version = ver;
             }
