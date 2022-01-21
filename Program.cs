@@ -28,8 +28,9 @@ foreach (var pr in prs)
     Console.WriteLine($"  {pr.Id}:{pr.Title}");
     if(pr.Merged)
     {
-        Process.Start("tap", $"sdk gitversion {pr.MergeCommitSha}");
+        var p = Process.Start("tap", $"sdk gitversion {pr.MergeCommitSha}");
+        p.WaitForExit ();
+        string ver = p.StandardOutput.ReadToEnd().Trim();
+        Console.WriteLine($"::set-output name=version::{ver}");
     }
 }
-
-
