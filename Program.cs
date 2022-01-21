@@ -6,7 +6,7 @@ using System.Diagnostics;
 string owner = "AsgerIversen";
 string reponame = "pr-version-comment";
 string token = "";
-
+string body = "This change is part of version `{version}` or later.";
 
 if (args.Length > 0)
 {
@@ -14,6 +14,11 @@ if (args.Length > 0)
     reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
     token = args[0];
 }
+if (args.Length > 1)
+{
+    body = args[1];
+}
+
 //Console.WriteLine("::group::Variables:");
 //foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
 //    Console.WriteLine($"  {v.Key}={v.Value}");
@@ -50,7 +55,8 @@ Console.WriteLine("::endgroup::");
 if (pullrequest != null)
 {
     Console.WriteLine($"Commenting on PR #{pullrequest.Number}.");
-    await github.Issue.Comment.Create(repoid, pullrequest.Number, $"This change is part of version `{version}` or later.");
+    body = body.Replace("{version}", version);
+    await github.Issue.Comment.Create(repoid, pullrequest.Number, body);
 }
 else
 {
