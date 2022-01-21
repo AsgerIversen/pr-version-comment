@@ -7,11 +7,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <CopyOpenTapPayloadFiles>true</CopyOpenTapPayloadFiles>
-    <OpenTapVersion>9.17.0-alpha.9.1</OpenTapVersion>
+    <OpenTapVersion>9.17.0-beta.11</OpenTapVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Octokit" Version="0.50.0" />
-    <PackageReference Include="OpenTAP" Version="9.17.0-alpha.9.1">
+    <PackageReference Include="OpenTAP" Version="$(OpenTapVersion)">
       <!--<ExcludeAssets>build</ExcludeAssets>-->
     </PackageReference>
     <Reference Include="OpenTap.Package">
