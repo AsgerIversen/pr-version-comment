@@ -45,7 +45,8 @@ string GetVersion(string sha)
 
         var action = new OpenTap.Package.GitVersionAction();
         action.Sha = sha;
-        Console.WriteLine($"    running tap sdk gitversion {sha}");
+        action.RepoPath = Directory.GetCurrentDirectory();
+        Console.WriteLine($"    running tap sdk gitversion {sha} --dir {Directory.GetCurrentDirectory()}");
         action.Execute(CancellationToken.None);
 
         OpenTap.Log.Flush();
