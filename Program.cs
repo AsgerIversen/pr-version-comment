@@ -14,9 +14,10 @@ if (args.Length > 0)
     reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
     token = args[0];
 }
-Console.WriteLine("Variables:");
+Console.WriteLine("::group::Variables:");
 foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
-Console.WriteLine($"  {v.Key}={v.Value}");
+    Console.WriteLine($"  {v.Key}={v.Value}");
+Console.WriteLine("::endgroup::");
 var github = new GitHubClient(new ProductHeaderValue("pr-version-comment"));
 github.Credentials = new Credentials(token);
 var repo = await github.Repository.Get(owner, reponame);
@@ -50,6 +51,10 @@ if (pullrequest != null)
 {
     Console.WriteLine($"Commenting on PR #{pullrequest.Number}.");
     await github.Issue.Comment.Create(repoid, pullrequest.Number, $"This change is part of version {version} or later.");
+}
+else
+{
+    Console.WriteLine($"This commit was not a merge commit for a PR. No action taken.");
 }
 
 string GetVersion(string sha)
