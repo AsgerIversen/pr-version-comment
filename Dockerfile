@@ -20,5 +20,7 @@ LABEL com.github.actions.color="orange"
 
 # Relayer the .NET SDK, anew with the build output  
 FROM opentapio/opentap:beta-bionic-slim
-COPY --from=build-env /out .
-ENTRYPOINT [ "dotnet", "/pr-version-comment.dll" ]
+COPY --from=build-env /out/Octokit.dll /opt/tap
+COPY --from=build-env /out/pr-version-comment.dll /opt/tap
+COPY --from=build-env /out/pr-version-comment.runtimeconfig.json /opt/tap
+ENTRYPOINT [ "dotnet", "/opt/tap/pr-version-comment.dll" ]
