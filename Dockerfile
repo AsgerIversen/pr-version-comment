@@ -19,6 +19,6 @@ LABEL com.github.actions.icon="git-pull-request"
 LABEL com.github.actions.color="orange"
 
 # Relayer the .NET SDK, anew with the build output  
-FROM opentapio/opentap:beta-bionic-slim
-COPY --from=build-env /out .
-ENTRYPOINT [ "dotnet", "/pr-version-comment.dll" ]
+FROM mcr.microsoft.com/dotnet/runtime:6.0
+COPY --from=build-env /out /opt/tap
+ENTRYPOINT [ "dotnet", "/opt/tap/pr-version-comment.dll" ]
