@@ -10,7 +10,7 @@ string token = "";
 if (args.Length > 0)
 {
     owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
-    reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY");
+    reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
     token = args[0];
 }
 Console.WriteLine("Variables:");
