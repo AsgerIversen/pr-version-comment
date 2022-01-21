@@ -22,18 +22,35 @@ github.Credentials = new Credentials(token);
 var repo = await github.Repository.Get(owner, reponame);
 var repoid = repo.Id;
 
+// find version number for the current commit:
+string sha = Environment.GetEnvironmentVariable("GITHUB_SHA");
+string version = GetVersion(sha);
+Console.WriteLine($"::set-output name=version::{version}");
+
+
+// Find the PR that created this merge commit (if any)
 var prs = await github.PullRequest.GetAllForRepository(repoid, new PullRequestRequest { State = ItemStateFilter.Closed });
-Console.WriteLine("Closed Pull Requests:");
+PullRequest pullrequest = null;
+Console.WriteLine("::group::Searching merged pull requests");
 foreach (var pr in prs)
 {
-    Console.WriteLine($"  {pr.Id}:{pr.Title}");
-    if(pr.Merged)
+    if (pr.Merged)
     {
-        string ver = GetVersion(pr.MergeCommitSha);
-        Console.WriteLine($"::set-output name=version::{ver}");
+        if (pr.MergeCommitSha == sha)
+        {
+            pullrequest = pr;
+        }
+        Console.WriteLine($"{(pullrequest == pr ? "*" : " ")} PR #{pr.Id} : {pr.Title}");
     }
 }
+Console.WriteLine("::endgroup::");
 
+
+if (pullrequest != null)
+{
+    Console.WriteLine($"Commenting on PR #{pullrequest.Number}.");
+    await github.Issue.Comment.Create(repoid, pullrequest.Number, $"This change is part of version {version} or later.");
+}
 
 string GetVersion(string sha)
 {
@@ -46,11 +63,12 @@ string GetVersion(string sha)
         var action = new OpenTap.Package.GitVersionAction();
         action.Sha = sha;
         action.RepoPath = Directory.GetCurrentDirectory();
-        Console.WriteLine($"    running tap sdk gitversion {sha} --dir {Directory.GetCurrentDirectory()}");
+        Console.WriteLine($"::group::running tap sdk gitversion {sha} --dir {Directory.GetCurrentDirectory()}");
         action.Execute(CancellationToken.None);
 
         OpenTap.Log.Flush();
         OpenTap.Log.RemoveListener(l);
+        Console.WriteLine("::endgroup::");
         return l.Version?.ToString();
     }
     return null;
@@ -64,7 +82,14 @@ class VersionLogListener : OpenTap.Diagnostic.ILogListener
     {
         foreach (Event e in Events)
         {
-            Console.WriteLine($"      {e.Message}");
+            if ((OpenTap.LogEventType)e.EventType == OpenTap.LogEventType.Debug)
+                Console.Write($"::debug:: ");
+            if ((OpenTap.LogEventType)e.EventType == OpenTap.LogEventType.Warning)
+                Console.Write($"::warning:: ");
+            if ((OpenTap.LogEventType)e.EventType == OpenTap.LogEventType.Error)
+                Console.Write($"::error:: ");
+
+            Console.WriteLine($"{e.Message}");
             if (e.Source == "GitVersion" && OpenTap.SemanticVersion.TryParse(e.Message, out var ver))
             {
                 Version = ver;
