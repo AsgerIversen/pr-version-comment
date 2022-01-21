@@ -35,4 +35,5 @@ jobs:
         uses: AsgerIversen/pr-version-comment
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          body: This change is part of version `{version}` or later.
 ```
