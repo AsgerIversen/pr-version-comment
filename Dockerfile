@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 as build-env
 
 # Copy everything and publish the release (publish implicitly restores and builds)
 COPY . ./src
-RUN dotnet build ./src/pr-version-comment.csproj -c Release -o ./out --no-self-contained
+RUN dotnet publish ./src/pr-version-comment.csproj -c Release -o ./out --no-self-contained
 
 # Label the container
 LABEL maintainer="Asger Iversen <asger.iversen@gmail.com>"
@@ -19,6 +19,8 @@ LABEL com.github.actions.icon="git-pull-request"
 LABEL com.github.actions.color="orange"
 
 # Relayer the .NET SDK, anew with the build output  
-FROM mcr.microsoft.com/dotnet/runtime:6.0
-COPY --from=build-env /out /opt/tap
+FROM opentapio/opentap:beta-bionic-slim
+COPY --from=build-env /out/Octokit.dll /opt/tap
+COPY --from=build-env /out/pr-version-comment.dll /opt/tap
+COPY --from=build-env /out/pr-version-comment.runtimeconfig.json /opt/tap
 ENTRYPOINT [ "dotnet", "/opt/tap/pr-version-comment.dll" ]
