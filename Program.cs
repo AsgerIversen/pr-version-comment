@@ -14,10 +14,10 @@ if (args.Length > 0)
     reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
     token = args[0];
 }
-Console.WriteLine("::group::Variables:");
-foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
-    Console.WriteLine($"  {v.Key}={v.Value}");
-Console.WriteLine("::endgroup::");
+//Console.WriteLine("::group::Variables:");
+//foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
+//    Console.WriteLine($"  {v.Key}={v.Value}");
+//Console.WriteLine("::endgroup::");
 var github = new GitHubClient(new ProductHeaderValue("pr-version-comment"));
 github.Credentials = new Credentials(token);
 var repo = await github.Repository.Get(owner, reponame);
@@ -41,7 +41,7 @@ foreach (var pr in prs)
         {
             pullrequest = pr;
         }
-        Console.WriteLine($"{(pullrequest == pr ? "*" : " ")} PR #{pr.Id} : {pr.Title}");
+        Console.WriteLine($"{(pullrequest == pr ? "*" : " ")} PR #{pr.Number} : {pr.Title}");
     }
 }
 Console.WriteLine("::endgroup::");
@@ -50,7 +50,7 @@ Console.WriteLine("::endgroup::");
 if (pullrequest != null)
 {
     Console.WriteLine($"Commenting on PR #{pullrequest.Number}.");
-    await github.Issue.Comment.Create(repoid, pullrequest.Number, $"This change is part of version {version} or later.");
+    await github.Issue.Comment.Create(repoid, pullrequest.Number, $"This change is part of version `{version}` or later.");
 }
 else
 {
