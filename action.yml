@@ -7,7 +7,9 @@ inputs:
   token:
     description: 'Github token used to access the github API. Assign from '
     required: true
-
+  body:
+    description: 'Content of the comment to add to a merged pull request. Use {version} to insert the version number.'
+    required: false
 outputs:
   version:
     description: 'The version number derived from the current git commit.'
@@ -17,3 +19,4 @@ runs:
   image: 'Dockerfile'
   args:
   - ${{ inputs.token }}
+  - ${{ inputs.body }}
