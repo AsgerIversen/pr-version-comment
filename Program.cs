@@ -63,13 +63,14 @@ Console.WriteLine("::endgroup::");
 
 if (pullrequest != null)
 {
-    Console.WriteLine($"Commenting on PR #{pullrequest.Number}.");
+    int prNum = pullrequest.Number;
+    Console.WriteLine($"Commenting on PR #{prNum}.");
     var body = Config.Body.Replace("{version}", version);
-    await github.Issue.Comment.Create(repoid, pullrequest.Number, body);
+    await github.Issue.Comment.Create(repoid, prNum, body);
 
     // Also add comments to linked issues
     var issueBody = Config.IssueBody.Replace("{version}", version);
-    var linkedIssues = await new LinkedIssues().GetLinkedIssues(pullrequest.Number);
+    var linkedIssues = await new LinkedIssues().GetLinkedIssues(prNum);
     foreach (int issueNumber in linkedIssues)
     {
         Console.WriteLine($"Commenting on linked issue #{issueNumber}.");
