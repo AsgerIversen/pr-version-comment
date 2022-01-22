@@ -20,6 +20,7 @@ LABEL com.github.actions.color="orange"
 
 # Relayer the .NET SDK, anew with the build output  
 FROM opentapio/opentap:beta-bionic-slim
+COPY --from=build-env /out/Newtonsoft.Json.dll /opt/tap
 COPY --from=build-env /out/Octokit.dll /opt/tap
 COPY --from=build-env /out/Octokit.GraphQL.dll /opt/tap
 COPY --from=build-env /out/Octokit.GraphQL.Core.dll /opt/tap
