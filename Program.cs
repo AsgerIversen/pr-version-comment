@@ -2,11 +2,12 @@ using Octokit;
 using OpenTap.Diagnostic;
 using System.Collections;
 using System.Diagnostics;
+using PRVersionComment;
 
-string owner = "AsgerIversen";
-string reponame = "pr-version-comment";
-string token = "";
-string body = "This change is part of version `{version}` or later.";
+string owner = Defaults.Owner;
+string reponame = Defaults.RepoName;
+string token = Defaults.Token;
+string body = Defaults.Body;
 
 if (args.Length > 0)
 {
@@ -84,7 +85,6 @@ string GetVersion(string sha)
     }
     return null;
 }
-
 
 class VersionLogListener : OpenTap.Diagnostic.ILogListener
 {
