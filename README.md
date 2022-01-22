@@ -12,7 +12,7 @@ This uses version numbers derived from git using `tap sdk gitversion` (see [Open
 
 To use get comments on merged PRs in your GitHub repository, add a workflow like below to `.github/workflows/pr-version-comment.yaml`:
 
-```
+```yaml
 push:
     branches:
       - 'main'
@@ -20,6 +20,7 @@ push:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   pr-version-comment:
