@@ -8,11 +8,25 @@ if (args.Length > 0)
 {
     Config.Owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
     Config.RepoName = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
-    Config.Token = args[0];
-}
-if (args.Length > 1 && !String.IsNullOrWhiteSpace(args[1]))
-{
-    Config.Body = args[1];
+    foreach (var arg in args)
+    {
+        var option = arg.Split('=').First();
+        var value = arg.Substring(2);
+        if (String.IsNullOrWhiteSpace(value))
+            continue;
+        switch (option)
+        {
+            case "t":
+                Config.Token = value;
+                break;
+            case "p":
+                Config.Body = value;
+                break;
+            case "i":
+                Config.IssueBody = value;
+                break;
+        }
+    }
 }
 
 //Console.WriteLine("::group::Variables:");

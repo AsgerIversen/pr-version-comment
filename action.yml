@@ -10,6 +10,9 @@ inputs:
   body:
     description: 'Content of the comment to add to a merged pull request. Use {version} to insert the version number.'
     required: false
+  issue-body:
+    description: 'Content of the comment to add to an issue that was closed as a consequence of a PR merge. Use {version} to insert the version number.'
+    required: false
 outputs:
   version:
     description: 'The version number derived from the current git commit.'
@@ -18,5 +21,6 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-  - ${{ inputs.token }}
-  - ${{ inputs.body }}
+  - t=${{ inputs.token }}
+  - p=${{ inputs.body }}
+  - i=${{ inputs.issue-body }}
