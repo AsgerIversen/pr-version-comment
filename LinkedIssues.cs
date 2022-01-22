@@ -27,12 +27,12 @@ namespace PRVersionComment
             .PullRequest(prNumber)
             .Select(pr => new
             {
-                pr.Number, 
-                IssueNumbers = pr.ClosingIssuesReferences(10,null,null,null,null).Nodes.Select(i => i.Number)
+                pr.Number,
+                IssueNumbers = pr.ClosingIssuesReferences(10,null,null,null,null).Nodes.Select(i => i.Number).ToList()
             }).Compile();
 
             var result = await connection.Run(query);
-            return result.IssueNumbers.ToList();
+            return result.IssueNumbers;
         }
     }
 }
