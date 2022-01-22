@@ -20,6 +20,7 @@ push:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   pr-version-comment:

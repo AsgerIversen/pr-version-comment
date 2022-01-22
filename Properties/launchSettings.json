@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "pr-version-comment": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "GITHUB_SHA": "1c04e2b8ec6981237ba37b58e9e333da6eeb7901"
+      }
+    }
+  }
+}
