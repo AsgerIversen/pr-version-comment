@@ -4,36 +4,45 @@ using System.Collections;
 using System.Diagnostics;
 using PRVersionComment;
 
-string owner = Defaults.Owner;
-string reponame = Defaults.RepoName;
-string token = Defaults.Token;
-string body = Defaults.Body;
-
 if (args.Length > 0)
 {
-    owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
-    reponame = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
-    token = args[0];
-}
-if (args.Length > 1 && !String.IsNullOrWhiteSpace(args[1]))
-{
-    body = args[1];
+    Config.Owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
+    Config.RepoName = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
+    foreach (var arg in args)
+    {
+        var option = arg.Split('=').First();
+        var value = arg.Substring(2);
+        if (String.IsNullOrWhiteSpace(value))
+            continue;
+        switch (option)
+        {
+            case "t":
+                Config.Token = value;
+                break;
+            case "p":
+                Config.Body = value;
+                break;
+            case "i":
+                Config.IssueBody = value;
+                break;
+        }
+    }
 }
 
 //Console.WriteLine("::group::Variables:");
 //foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
 //    Console.WriteLine($"  {v.Key}={v.Value}");
 //Console.WriteLine("::endgroup::");
+
 var github = new GitHubClient(new ProductHeaderValue("pr-version-comment"));
-github.Credentials = new Credentials(token);
-var repo = await github.Repository.Get(owner, reponame);
+github.Credentials = new Credentials(Config.Token);
+var repo = await github.Repository.Get(Config.Owner, Config.RepoName);
 var repoid = repo.Id;
 
 // find version number for the current commit:
 string sha = Environment.GetEnvironmentVariable("GITHUB_SHA");
 string version = GetVersion(sha);
 Console.WriteLine($"::set-output name=version::{version}");
-
 
 // Find the PR that created this merge commit (if any)
 var prs = await github.PullRequest.GetAllForRepository(repoid, new PullRequestRequest { State = ItemStateFilter.Closed });
@@ -52,17 +61,28 @@ foreach (var pr in prs)
 }
 Console.WriteLine("::endgroup::");
 
-
 if (pullrequest != null)
 {
     Console.WriteLine($"Commenting on PR #{pullrequest.Number}.");
-    body = body.Replace("{version}", version);
+    var body = Config.Body.Replace("{version}", version);
     await github.Issue.Comment.Create(repoid, pullrequest.Number, body);
+
+    // Also add comments to linked issues
+    var issueBody = Config.IssueBody.Replace("{version}", version);
+    var linkedIssues = await new LinkedIssues().GetLinkedIssues(pullrequest.Number);
+    foreach (int issueNumber in linkedIssues)
+    {
+        Console.WriteLine($"Commenting on linked issue #{issueNumber}.");
+        await github.Issue.Comment.Create(repoid, issueNumber, issueBody);
+    }
 }
 else
 {
     Console.WriteLine($"This commit was not a merge commit for a PR. No action taken.");
 }
+
+
+
 
 string GetVersion(string sha)
 {
