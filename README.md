@@ -12,8 +12,10 @@ This uses version numbers derived from git using `tap sdk gitversion` (see [Open
 
 To use get comments on merged PRs in your GitHub repository, create a workflow (eg: `.github/workflows/pr-version-comment.yaml` see [Creating a Workflow file](https://help.github.com/en/articles/configuring-a-workflow#creating-a-workflow-file)) with content like below:
 
+
 ```yaml
-push:
+on:
+  push:
     branches:
       - 'main'
 
@@ -33,6 +35,21 @@ jobs:
         with:
           # This action needs the entire history of the repository to calculate the version
           fetch-depth: 0
+      - name: Run comment action
+        uses: docker://ghcr.io/asgeriversen/pr-version-comment:dockerBuild
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # (Optional) Content of the comment to add to a merged pull request. Use {version} 
+          # to insert the version number.
+          body: This change is part of version `{version}` or later.
+          # (Optional) Content of the comment to add to an issue that was closed as a 
+          # consequence of a PR merge. Use {version} to insert the version number.
+          issue-body: A fix for this is in version `{version}` or later.
+```
+
+### Legacy (slower) way of using this action
+
+```yaml
       - name: Run comment action
         uses: AsgerIversen/pr-version-comment
         with:
