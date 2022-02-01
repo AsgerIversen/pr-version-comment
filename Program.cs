@@ -58,10 +58,10 @@ if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_
     Config.RepoName = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
 }
 
-Console.WriteLine("::group::Variables:");
-foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
-    Console.WriteLine($"  {v.Key}={v.Value}");
-Console.WriteLine("::endgroup::");
+// Console.WriteLine("::group::Variables:");
+// foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
+//     Console.WriteLine($"  {v.Key}={v.Value}");
+// Console.WriteLine("::endgroup::");
 
 var github = new GitHubClient(new ProductHeaderValue("pr-version-comment"));
 github.Credentials = new Credentials(Config.Token);
