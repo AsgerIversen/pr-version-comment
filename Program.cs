@@ -4,13 +4,10 @@ using System.Collections;
 using System.Diagnostics;
 using PRVersionComment;
 
+
+
 if (args.Length > 0)
 {
-    Config.Owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
-    Config.RepoName = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
-    Config.Token = Environment.GetEnvironmentVariable("token");
-    Config.Body = Environment.GetEnvironmentVariable("body");
-    Config.IssueBody = Environment.GetEnvironmentVariable("issue-body");
 
     foreach (var arg in args)
     {
@@ -31,6 +28,34 @@ if (args.Length > 0)
                 break;
         }
     }
+}
+else
+{
+    Config.Token = Environment.GetEnvironmentVariable("token") ?? Config.Token;
+    Config.Body = Environment.GetEnvironmentVariable("body") ?? Config.Body;
+    Config.IssueBody = Environment.GetEnvironmentVariable("issue-body") ?? Config.IssueBody;
+}
+
+if (String.IsNullOrEmpty(Config.Token))
+{
+    Console.WriteLine("::error:: Missing required github token. See expected usage below for how to pass this in.");
+    Console.WriteLine("::error:: Expected usage is is either:");
+    Console.WriteLine("::error::   - name: Run comment action");
+    Console.WriteLine("::error::     uses: AsgerIversen/pr-version-comment");
+    Console.WriteLine("::error::     with:");
+    Console.WriteLine("::error::       token: ${{ secrets.GITHUB_TOKEN }}");
+    Console.WriteLine("::error:: or:");
+    Console.WriteLine("::error::   - name: Run comment action");
+    Console.WriteLine("::error::     uses: docker://ghcr.io/asgeriversen/pr-version-comment:main");
+    Console.WriteLine("::error::     env:");
+    Console.WriteLine("::error::       token: ${{ secrets.GITHUB_TOKEN }}");
+}
+
+
+if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER")))
+{ // These will be set when running in a github action. When debugging, we use the defaults set in Config
+    Config.Owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
+    Config.RepoName = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
 }
 
 Console.WriteLine("::group::Variables:");
