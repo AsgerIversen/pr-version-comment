@@ -8,6 +8,10 @@ if (args.Length > 0)
 {
     Config.Owner = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
     Config.RepoName = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY").Split("/").Last();
+    Config.Token = Environment.GetEnvironmentVariable("token");
+    Config.Body = Environment.GetEnvironmentVariable("body");
+    Config.IssueBody = Environment.GetEnvironmentVariable("issue-body");
+
     foreach (var arg in args)
     {
         var option = arg.Split('=').First();
@@ -29,10 +33,10 @@ if (args.Length > 0)
     }
 }
 
-//Console.WriteLine("::group::Variables:");
-//foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
-//    Console.WriteLine($"  {v.Key}={v.Value}");
-//Console.WriteLine("::endgroup::");
+Console.WriteLine("::group::Variables:");
+foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
+    Console.WriteLine($"  {v.Key}={v.Value}");
+Console.WriteLine("::endgroup::");
 
 var github = new GitHubClient(new ProductHeaderValue("pr-version-comment"));
 github.Credentials = new Credentials(Config.Token);
