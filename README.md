@@ -36,7 +36,7 @@ jobs:
           # This action needs the entire history of the repository to calculate the version
           fetch-depth: 0
       - name: Run comment action
-        uses: docker://ghcr.io/asgeriversen/pr-version-comment:dockerBuild
+        uses: docker://ghcr.io/asgeriversen/pr-version-comment:v1
         env:
           token: ${{ secrets.GITHUB_TOKEN }}
           # (Optional) Content of the comment to add to a merged pull request. Use {version} 
