@@ -3,6 +3,7 @@ using OpenTap.Diagnostic;
 using System.Collections;
 using System.Diagnostics;
 using PRVersionComment;
+using System.IO;
 
 
 
@@ -26,6 +27,9 @@ if (args.Length > 0)
             case "i":
                 Config.IssueBody = value;
                 break;
+            case "d":
+                Config.WorkingDir = value;
+                break;
         }
     }
 }
@@ -34,6 +38,7 @@ else
     Config.Token = Environment.GetEnvironmentVariable("token") ?? Config.Token;
     Config.Body = Environment.GetEnvironmentVariable("body") ?? Config.Body;
     Config.IssueBody = Environment.GetEnvironmentVariable("issue-body") ?? Config.IssueBody;
+    Config.WorkingDir = Environment.GetEnvironmentVariable("working-directory") ?? Config.WorkingDir;
 }
 
 if (String.IsNullOrEmpty(Config.Token))
@@ -124,8 +129,8 @@ string GetVersion(string sha)
 
         var action = new OpenTap.Package.GitVersionAction();
         action.Sha = sha;
-        action.RepoPath = Directory.GetCurrentDirectory();
-        Console.WriteLine($"::group::running tap sdk gitversion {sha} --dir {Directory.GetCurrentDirectory()}");
+        action.RepoPath = Path.Combine(Directory.GetCurrentDirectory(),Config.WorkingDir);
+        Console.WriteLine($"::group::running tap sdk gitversion {sha} --dir {action.RepoPath}");
         action.Execute(CancellationToken.None);
 
         OpenTap.Log.Flush();
