@@ -13,6 +13,9 @@ inputs:
   issue-body:
     description: 'Content of the comment to add to an issue that was closed as a consequence of a PR merge. Use {version} to insert the version number.'
     required: false
+  working-directory:
+    description: 'Directory to look for .gitversion file in. Relative to the git root directory.'
+    required: false
 outputs:
   version:
     description: 'The version number derived from the current git commit.'
@@ -24,3 +27,4 @@ runs:
   - t=${{ inputs.token }}
   - p=${{ inputs.body }}
   - i=${{ inputs.issue-body }}
+  - d=${{ inputs.working-directory }}

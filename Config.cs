@@ -13,5 +13,6 @@ namespace PRVersionComment
         public static string Token { get; set; } = "";
         public static string Body { get; set; } = "This change is part of version `{version}` or later.";
         public static string IssueBody { get; set; } = "A fix for this is in version `{version}` or later.";
+        public static string WorkingDir { get; set; } = ".";
     }
 }

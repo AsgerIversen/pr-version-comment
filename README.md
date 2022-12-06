@@ -45,6 +45,9 @@ jobs:
           # (Optional) Content of the comment to add to an issue that was closed as a 
           # consequence of a PR merge. Use {version} to insert the version number.
           issue-body: A fix for this is in version `{version}` or later.
+          # (Optional) Directory to look for .gitversion file in. Relative to the git
+          # root directory.
+          working-directory: subFolder
 ```
 
 ### Legacy (slower) way of using this action
@@ -60,4 +63,7 @@ jobs:
           # (Optional) Content of the comment to add to an issue that was closed as a 
           # consequence of a PR merge. Use {version} to insert the version number.
           issue-body: A fix for this is in version `{version}` or later.
+          # (Optional) Directory to look for .gitversion file in. Relative to the git
+          # root directory.
+          working-directory: subFolder
 ```
