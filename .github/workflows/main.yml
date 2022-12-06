@@ -6,7 +6,7 @@ permissions:
   issues: write
 
 jobs:
-  hello_world_job:
+  default-test:
     runs-on: ubuntu-latest
     name: Testing
     steps:
@@ -22,6 +22,27 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: This change is part of version `{version}` or later (custom).
+      # Use the output from the `hello` step
+      - name: Get the output time
+        run: echo "The version is ${{ steps.hello.outputs.version }}"
+
+  working-dir-test:
+    runs-on: ubuntu-latest
+    name: Testing
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run action step
+        uses: ./ # Uses an action in the root directory
+        id: hello
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: This change is part of version `{version}` or later (custom).
+          working-directory: subfolder
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The version is ${{ steps.hello.outputs.version }}"
