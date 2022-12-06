@@ -8,7 +8,7 @@ permissions:
 jobs:
   default-test:
     runs-on: ubuntu-latest
-    name: Testing
+    name: Default Test
     steps:
       # To use this repository's private action,
       # you must check out the repository
@@ -28,7 +28,7 @@ jobs:
 
   working-dir-test:
     runs-on: ubuntu-latest
-    name: Testing
+    name: Working Dir Test
     steps:
       # To use this repository's private action,
       # you must check out the repository

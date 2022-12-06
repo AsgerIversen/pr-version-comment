@@ -1,5 +1,5 @@
 # This is a test file to test support for multiple .gitversion files in different folders
 
-version = 1.0.0
+version = 3.2.1
 
 beta branch = main
