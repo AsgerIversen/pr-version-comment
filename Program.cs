@@ -91,6 +91,9 @@ foreach (var pr in prs)
             pullrequest = pr;
         }
         Console.WriteLine($"{(pullrequest == pr ? "*" : " ")} PR #{pr.Number} : {pr.Title}");
+        if(pullrequest != null)
+            // don't print all pull requests after we find the one we need (which is usually one of the first ones)
+            break;
     }
 }
 Console.WriteLine("::endgroup::");
