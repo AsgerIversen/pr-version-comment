@@ -31,7 +31,7 @@ jobs:
     name: pr-version-comment
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # This action needs the entire history of the repository to calculate the version
           fetch-depth: 0
