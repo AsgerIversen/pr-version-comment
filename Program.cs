@@ -76,7 +76,20 @@ var repoid = repo.Id;
 // find version number for the current commit:
 string sha = Environment.GetEnvironmentVariable("GITHUB_SHA");
 string version = GetVersion(sha);
-Console.WriteLine($"::set-output name=version::{version}");
+
+var envFile = Environment.GetEnvironmentVariable("GITHUB_OUTPUT");
+if (!string.IsNullOrWhiteSpace(envFile) && File.Exists(envFile))
+{
+    using (var f = new StreamWriter(envFile, append: true))
+    {
+        f.WriteLine($"version={version}");
+    }
+}
+else 
+{
+    // fallback
+    Console.WriteLine($"::set-output name=version::{version}");
+}
 
 // Find the PR that created this merge commit (if any)
 var prs = await github.PullRequest.GetAllForRepository(repoid, new PullRequestRequest { State = ItemStateFilter.Closed });
